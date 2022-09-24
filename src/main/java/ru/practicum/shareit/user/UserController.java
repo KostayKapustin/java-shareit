@@ -16,18 +16,22 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @PostMapping
     public UserDto addUser(@Valid @RequestBody UserDto userDto) {
         return userService.addUser(userDto);
     }
+
     @GetMapping("/{id}")
     public UserDto findUserById(@PathVariable Long id) {
         return userService.findUserById(id);
     }
+
     @GetMapping
     public List<UserDto> findAll() {
         return userService.findAll();
