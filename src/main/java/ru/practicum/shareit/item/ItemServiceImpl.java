@@ -48,6 +48,7 @@ public class ItemServiceImpl implements ItemService {
             return null;
         }
     }
+
     @Override
     public Collection<ItemDto> searchItems(String text) {
         if (!text.isEmpty()) {

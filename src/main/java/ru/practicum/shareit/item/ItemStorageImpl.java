@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class ItemStorageImpl implements ItemStorage {
-    
     private final Map<Long, List<Item>> items = new HashMap<>();
     private Long id = 0L;
 
