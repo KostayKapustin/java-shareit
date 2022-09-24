@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
 
@@ -78,6 +78,7 @@ public class UserServiceImpl implements UserService{
             }
         }
     }
+
     @Override
     public void checkingUserById(Long id) {
         List<User> usersList = userStorage.findAll();

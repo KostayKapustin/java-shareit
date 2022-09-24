@@ -6,6 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.Collection;
 
 public interface ItemStorage {
+
     ItemDto addItem(Long userId, Item item);
 
     Item getItem(long itemId);
