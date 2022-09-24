@@ -7,6 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.exception.RecurException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.HashMap;
 import java.util.List;
