@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 @Getter
 @Setter
+@Validated
 public class CommentDto {
     private Long id;
 
