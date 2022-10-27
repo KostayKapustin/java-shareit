@@ -16,8 +16,10 @@ public interface BookingStorage extends JpaRepository<Booking,Long> {
 
     Page<Booking> findAllByBookerOrderByStartDesc(
             User booker, Pageable pageable);
+
     List<Booking> findAllByBookerOrderByStartDesc(
             User booker);
+
     List<Booking> findAllByBookerAndStatusOrderByStartDesc(
             User booker,
             BookingStatus status);
