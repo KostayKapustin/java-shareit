@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.storage;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.model.Booking;
@@ -12,9 +14,10 @@ import java.util.List;
 
 public interface BookingStorage extends JpaRepository<Booking,Long> {
 
+    Page<Booking> findAllByBookerOrderByStartDesc(
+            User booker, Pageable pageable);
     List<Booking> findAllByBookerOrderByStartDesc(
             User booker);
-
     List<Booking> findAllByBookerAndStatusOrderByStartDesc(
             User booker,
             BookingStatus status);
@@ -39,7 +42,7 @@ public interface BookingStorage extends JpaRepository<Booking,Long> {
             LocalDateTime start);
 
     List<Booking> findAllByItemOwnerOrderByStartDesc(
-            User owner);
+            User owner, Pageable pageable);
 
     List<Booking> findAllByItemOwnerAndStatusOrderByStartDesc(
             User owner,

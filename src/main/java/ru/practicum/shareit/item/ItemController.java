@@ -13,6 +13,8 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -28,26 +30,33 @@ public class ItemController {
     private final ItemService itemService;
     private final UserService userService;
     private final BookingService bookingService;
+    private final ItemRequestService itemRequestService;
 
     @PostMapping
     public ItemDto addItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
         itemDto.setOwner(userId);
         User owner = userService.getUserById(userId);
-        Item item = ItemMapper.toItem(itemDto,owner);
+        ItemRequest itemRequest;
+        Item item;
+        if (itemDto.getRequestId() != null) {
+            itemRequest = itemRequestService.getItemRequestById(itemDto.getRequestId());
+            item = ItemMapper.toItemRequest(itemDto, owner, itemRequest);
+        } else {
+            item = ItemMapper.toItem(itemDto, owner);
+        }
         return ItemMapper.toItemDto(itemService.addItem(item));
     }
 
-    @GetMapping("")
+    @GetMapping
     public List<ItemPlusDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
         User owner = userService.getUserById(userId);
         List<Item> incomingList = itemService.getAllItemsByOwner(owner);
         List<ItemPlusDto> outgoingList = new ArrayList<>();
-
-        log.info("Запрошен список всех объектов. Текущее количество объектов: {}",incomingList.size());
-        for (Item item: incomingList) {
+        log.info("Запрошен список всех объектов. Текущее количество объектов: {}", incomingList.size());
+        for (Item item : incomingList) {
             ItemPlusDto itemDto = ItemMapper.toItemPlusDto(item);
-            itemDto.setLastBooking(bookingService.getLastBookingForOwner(item,owner,userId));
-            itemDto.setNextBooking(bookingService.getNextBookingForOwner(item,owner,userId));
+            itemDto.setLastBooking(bookingService.getLastBookingForOwner(item, owner, userId));
+            itemDto.setNextBooking(bookingService.getNextBookingForOwner(item, owner, userId));
             outgoingList.add(itemDto);
         }
         return outgoingList;
@@ -60,9 +69,8 @@ public class ItemController {
         itemDto.setOwner(userId);
         itemDto.setId(id);
         User owner = userService.getUserById(userId);
-        log.info("Изменен объект: {}",itemDto);
-
-        Item updateItem = itemService.updateItem(ItemMapper.toItem(itemDto,owner));
+        log.info("Изменен объект: {}", itemDto);
+        Item updateItem = itemService.updateItem(ItemMapper.toItem(itemDto, owner));
         return ItemMapper.toItemDto(updateItem);
     }
 
@@ -72,10 +80,10 @@ public class ItemController {
                                    @RequestHeader("X-Sharer-User-Id") Long userId) {
         Item item = itemService.getItemById(id);
         User owner = item.getOwner();
-        log.info("Запрошен объект: {}",item);
+        log.info("Запрошен объект: {}", item);
         ItemPlusDto itemDto = ItemMapper.toItemPlusDto(item);
-        itemDto.setLastBooking(bookingService.getLastBookingForOwner(item,owner,userId));
-        itemDto.setNextBooking(bookingService.getNextBookingForOwner(item,owner,userId));
+        itemDto.setLastBooking(bookingService.getLastBookingForOwner(item, owner, userId));
+        itemDto.setNextBooking(bookingService.getNextBookingForOwner(item, owner, userId));
         itemDto.setComments(itemService.getCommentsByItem(item));
         return itemDto;
     }
@@ -95,12 +103,11 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@PathVariable Long itemId,
                                  @Valid @RequestBody CommentDto commentDto,
-                                  @RequestHeader("X-Sharer-User-Id") Long userId) {
-
+                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
         User author = userService.getUserById(userId);
         Item item = itemService.getItemById(itemId);
-        Boolean checkFlag = bookingService.checkBookingByBooker(item,author);
-        Comment comment = CommentMapper.toComment(commentDto,item,author);
-        return itemService.addComment(item,author,comment,checkFlag);
+        Boolean checkFlag = bookingService.checkBookingByBooker(item, author);
+        Comment comment = CommentMapper.toComment(commentDto, item, author);
+        return itemService.addComment(item, author, comment, checkFlag);
     }
 }

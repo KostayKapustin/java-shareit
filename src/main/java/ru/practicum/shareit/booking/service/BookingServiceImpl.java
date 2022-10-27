@@ -1,26 +1,28 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.maper.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingDtoItemOrUser;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingStorage;
 import ru.practicum.shareit.exeption.BadRequestException;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -28,9 +30,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Booking addNewBooking(Booking booking) {
+    public BookingDtoItemOrUser addNewBooking(Booking booking) {
         checkAddNewBooking(booking);
-        return bookingStorage.save(booking);
+        BookingDtoItemOrUser bookingDtoItemOrUser =
+                BookingMapper.toBookingDtoItemOrUser(booking);
+        bookingDtoItemOrUser.setItem(ItemMapper.toItemDtoBooking(booking.getItem()));
+        bookingDtoItemOrUser.setBooker(UserMapper.toUserDtoBooking(booking.getBooker()));
+        bookingStorage.save(booking);
+        return bookingDtoItemOrUser;
     }
 
     @Override
@@ -74,17 +81,21 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Booking> getAllBookingsForBooker(User booker, String state) {
+    public List<Booking> getAllBookingsForBooker(User booker, String state, int from, int size) {
         try {
             BookingState stateEnum = BookingState.valueOf(state);
             switch (stateEnum) {
                 case ALL:
-                    return bookingStorage.findAllByBookerOrderByStartDesc(booker);
+                    return bookingStorage
+                            .findAllByBookerOrderByStartDesc(booker,
+                                    PageRequest.of(from / size,size)).getContent();
                 case FUTURE:
-                    return bookingStorage.findAllByBookerAndStartAfterOrderByStartDesc(booker,LocalDateTime.now());
+                    return bookingStorage
+                            .findAllByBookerAndStartAfterOrderByStartDesc(booker,LocalDateTime.now());
                 case WAITING:
                 case REJECTED:
-                    return bookingStorage.findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.valueOf(state));
+                    return bookingStorage
+                            .findAllByBookerAndStatusOrderByStartDesc(booker,BookingStatus.valueOf(state));
                 case CURRENT:
                     return bookingStorage
                             .findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(booker,
@@ -101,17 +112,21 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Booking> getAllBookingsForOwner(User owner, String state) {
+    public List<Booking> getAllBookingsForOwner(User owner, String state, int from, int size) {
         try {
             BookingState stateEnum = BookingState.valueOf(state);
             switch (stateEnum) {
                 case ALL:
-                    return bookingStorage.findAllByItemOwnerOrderByStartDesc(owner);
+                    return bookingStorage
+                            .findAllByItemOwnerOrderByStartDesc(owner,
+                                    PageRequest.of(from / size, size));
                 case FUTURE:
-                    return bookingStorage.findAllByItemOwnerAndStartAfterOrderByStartDesc(owner, LocalDateTime.now());
+                    return bookingStorage
+                            .findAllByItemOwnerAndStartAfterOrderByStartDesc(owner, LocalDateTime.now());
                 case WAITING:
                 case REJECTED:
-                    return bookingStorage.findAllByItemOwnerAndStatusOrderByStartDesc(owner, BookingStatus.valueOf(state));
+                    return bookingStorage
+                            .findAllByItemOwnerAndStatusOrderByStartDesc(owner, BookingStatus.valueOf(state));
                 case CURRENT:
                     return bookingStorage
                             .findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(owner,

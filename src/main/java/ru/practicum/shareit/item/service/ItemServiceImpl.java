@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.CommentStorage;
 import ru.practicum.shareit.item.storage.ItemStorage;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
@@ -20,13 +23,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
-
     private final CommentStorage commentStorage;
 
     @Override
@@ -55,28 +56,22 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item updateItem(Item item) {
         Item currentItem = getItemById(item.getId());
-
         if (!item.getOwner().equals(currentItem.getOwner())) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND);
         }
-
         Boolean availableItem = item.getAvailable();
         String nameItem = item.getName();
         String descriptionItem = item.getDescription();
-
         if (availableItem != null) {
             currentItem.setAvailable(availableItem);
         }
-
         if (nameItem != null) {
             currentItem.setName(nameItem);
         }
-
         if (descriptionItem != null) {
             currentItem.setDescription(descriptionItem);
         }
-
         itemStorage.save(currentItem);
         return currentItem;
     }
@@ -90,6 +85,35 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
+    @Override
+    @Transactional
+    public CommentDto addComment(Item item, User booker, Comment comment, Boolean checkFlag) {
+        if (!checkFlag) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        Comment commentTmp =  commentStorage.save(comment);
+        return CommentMapper.toCommentDto(commentTmp);
+    }
+
+    @Override
+    public List<CommentDto> getCommentsByItem(Item item) {
+        List<Comment> comments = commentStorage.findAllByItemOrderByIdDesc(item);
+        List<CommentDto> commentDtoList = new ArrayList<>();
+        for (Comment comment: comments) {
+            commentDtoList.add(CommentMapper.toCommentDto(comment));
+        }
+        return commentDtoList;
+    }
+
+    @Override
+    public List<ItemDto> getAllItemsByRequest(ItemRequest itemRequest) {
+        List<Item> items = itemStorage.findAllByRequest(itemRequest);
+        List<ItemDto> itemDto = new ArrayList<>();
+        for (Item item: items) {
+            itemDto.add(ItemMapper.toItemDto(item));
+        }
+        return itemDto;
+    }
 
     private void checkIncomingItem(Item item) {
         try {
@@ -122,24 +146,5 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    @Override
-    @Transactional
-    public CommentDto addComment(Item item, User booker, Comment comment, Boolean checkFlag) {
-        if (!checkFlag) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        Comment commentTmp =  commentStorage.save(comment);
-        return CommentMapper.toCommentDto(commentTmp);
-    }
-
-    @Override
-    public List<CommentDto> getCommentsByItem(Item item) {
-        List<Comment> comments = commentStorage.findAllByItemOrderByIdDesc(item);
-        List<CommentDto> commentDtoList = new ArrayList<>();
-        for (Comment comment: comments) {
-            commentDtoList.add(CommentMapper.toCommentDto(comment));
-        }
-        return commentDtoList;
-    }
 
 }
