@@ -125,9 +125,8 @@ public class BookingServiceTest {
                 equalTo(0));
         assertThrows(BadRequestException.class, () ->
                 bookingService.getAllBookingsForBooker(user2, "TEST", 0, 10));
-        assertThrows(Exception.class, () -> bookingService.getAllBookingsForOwner
-                (anotherUser, "ALL11", 0, 10));
-
+        assertThrows(Exception.class, () ->
+                bookingService.getAllBookingsForOwner(anotherUser, "ALL11", 0, 10));
     }
 
     @Test
@@ -140,11 +139,11 @@ public class BookingServiceTest {
                         .getStatus(),
                 equalTo(WAITING));
         bookingService.approvalBookingById(1L, 1L, true);
-        assertThrows(ResponseStatusException.class, () -> bookingService.approvalBookingById
-                (1L, 100L, true));
+        assertThrows(ResponseStatusException.class, () ->
+                bookingService.approvalBookingById(1L, 100L, true));
 
-        assertThrows(ResponseStatusException.class, () -> bookingService.approvalBookingById
-                (1L, 1L, false));
+        assertThrows(ResponseStatusException.class, () ->
+                bookingService.approvalBookingById(1L, 1L, false));
 
         assertThat(bookingService.getAllBookingsForBooker(user2, "ALL", 0, 10)
                         .get(0)
@@ -217,8 +216,8 @@ public class BookingServiceTest {
         assertThat(bookingService.getAllBookingsForOwner(user, "PAST", 0, 10)
                         .size(),
                 equalTo(0));
-        assertThrows(Exception.class, () -> bookingService.getAllBookingsForOwner
-                (user, "PAST11", 0, 10));
+        assertThrows(Exception.class, () ->
+                bookingService.getAllBookingsForOwner(user, "PAST11", 0, 10));
     }
 
     @Test
