@@ -127,6 +127,7 @@ public class BookingServiceTest {
                 bookingService.getAllBookingsForBooker(user2, "TEST", 0, 10));
         assertThrows(Exception.class, () -> bookingService.getAllBookingsForOwner
                 (anotherUser, "ALL11", 0, 10));
+
     }
 
     @Test
@@ -141,8 +142,10 @@ public class BookingServiceTest {
         bookingService.approvalBookingById(1L, 1L, true);
         assertThrows(ResponseStatusException.class, () -> bookingService.approvalBookingById
                 (1L, 100L, true));
+
         assertThrows(ResponseStatusException.class, () -> bookingService.approvalBookingById
                 (1L, 1L, false));
+
         assertThat(bookingService.getAllBookingsForBooker(user2, "ALL", 0, 10)
                         .get(0)
                         .getStatus(),

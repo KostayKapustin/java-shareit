@@ -9,7 +9,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
 import java.nio.charset.StandardCharsets;
@@ -56,7 +55,7 @@ public class ItemRequestControllerTest {
 
     @Test
     void getItemRequestById() throws Exception {
-        when(itemRequestService.getItemRequestById(10l, 10l))
+        when(itemRequestService.getItemRequestById(10L, 10L))
                 .thenReturn(itemRequest);
         mvc.perform(get("/requests/1")
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -69,7 +68,7 @@ public class ItemRequestControllerTest {
     @Test
     void getAllItemRequestByRequest() throws Exception {
         List<ItemRequestDto> itemRequestDtoList = new ArrayList<>();
-        when(itemRequestService.getAllItemRequest(10l, 1, 9))
+        when(itemRequestService.getAllItemRequest(10L, 1, 9))
                 .thenReturn(itemRequestDtoList);
         mvc.perform(get("/requests/10")
                         .characterEncoding(StandardCharsets.UTF_8)

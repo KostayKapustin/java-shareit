@@ -47,6 +47,7 @@ public class ItemRequestServiceTest {
         itemRequest.setRequest(user);
         itemRequestService.addItemRequest(ItemRequestMapper.toItemRequestDto(itemRequest));
     }
+
     @Test
     @DirtiesContext
     @Transactional
@@ -60,7 +61,7 @@ public class ItemRequestServiceTest {
         assertThat(itemRequestForCheck.getId(),equalTo(1L));
 
         assertThrows(NoSuchElementException.class, () -> itemRequestService.getItemRequestById(100L));
-        
+
     }
 
     @Test
@@ -77,9 +78,9 @@ public class ItemRequestServiceTest {
     @DirtiesContext
     @Transactional
     void getAllItemRequest() {
-        List<ItemRequestDto> itemRequestDtoList = itemRequestService.getAllItemRequest(1l,1,5);
+        List<ItemRequestDto> itemRequestDtoList = itemRequestService.getAllItemRequest(1L,1,5);
         assertThat(itemRequestDtoList.size(),equalTo(0));
         assertThrows(ResponseStatusException.class, () ->
-                itemRequestService.getAllItemRequest(1l,-1,1));
+                itemRequestService.getAllItemRequest(1L,-1,1));
     }
 }
