@@ -66,24 +66,24 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    void getPageItemRequestByRequest() throws Exception {
+    void getAllItemRequestByRequest() throws Exception {
         List<ItemRequestDto> itemRequestDtoList = new ArrayList<>();
-        when(itemRequestService.getAllItemRequest(10L, 1, 9))
+        when(itemRequestService.getAllItemRequest(10L))
                 .thenReturn(itemRequestDtoList);
-        mvc.perform(get("/requests/all")
+        mvc.perform(get("/requests")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk());
     }
-    
+
     @Test
-    void getAllItemRequestByRequest() throws Exception {
+    void getPageItemRequestByRequest() throws Exception {
         List<ItemRequestDto> itemRequestDtoList = new ArrayList<>();
-        when(itemRequestService.getAllItemRequest(10L))
+        when(itemRequestService.getAllItemRequest(10L, 1, 9))
                 .thenReturn(itemRequestDtoList);
-        mvc.perform(get("/requests")
+        mvc.perform(get("/requests/all")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
