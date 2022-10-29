@@ -1,11 +1,13 @@
 package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -29,33 +31,55 @@ public class ItemRequestServiceTest {
     @Autowired
     private UserService userService;
 
-    @Test
-    @DirtiesContext
-    @Transactional
-    void addAndGetItemRequest() {
-        User user = new User();
+    private User user = new User();
+    private ItemRequest itemRequest = new ItemRequest();
+
+
+    @BeforeEach
+    public void reparationTest() {
         user.setId(1L);
         user.setName("user");
         user.setEmail("user@user.com");
         userService.addUser(user);
 
-        ItemRequest itemRequest = new ItemRequest();
         itemRequest.setId(1L);
         itemRequest.setDescription("Test");
         itemRequest.setRequest(user);
         itemRequestService.addItemRequest(ItemRequestMapper.toItemRequestDto(itemRequest));
-
+    }
+    @Test
+    @DirtiesContext
+    @Transactional
+    void addAndGetItemRequest() {
         ItemRequest itemRequestForCheck = itemRequestService.getItemRequestById(itemRequest.getId());
         List<ItemRequestDto> itemRequestList = itemRequestService.getAllItemRequest(user.getId());
 
         assertThat(itemRequestList.size(), equalTo(1));
         assertThat(itemRequestForCheck.getDescription(),equalTo("Test"));
 
-        assertThrows(NoSuchElementException.class, () -> {
-            itemRequestService.getItemRequestById(99L);
-        });
+        assertThat(itemRequestForCheck.getId(),equalTo(1L));
 
-        ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
-        ItemRequest itemRequest2 = ItemRequestMapper.toItemRequest(itemRequestDto,user);
+        assertThrows(NoSuchElementException.class, () -> itemRequestService.getItemRequestById(100L));
+        
+    }
+
+    @Test
+    @DirtiesContext
+    @Transactional
+    void getItemRequestById() {
+        ItemRequestDto itemRequestDto = itemRequestService.getItemRequestById(itemRequest.getId(), user.getId());
+        assertThat(itemRequestDto.getId(),equalTo(1L));
+        assertThat(itemRequestDto.getDescription(),equalTo("Test"));
+        assertThrows(Exception.class, () -> itemRequestService.getItemRequestById(100L, user.getId()));
+    }
+
+    @Test
+    @DirtiesContext
+    @Transactional
+    void getAllItemRequest() {
+        List<ItemRequestDto> itemRequestDtoList = itemRequestService.getAllItemRequest(1l,1,5);
+        assertThat(itemRequestDtoList.size(),equalTo(0));
+        assertThrows(ResponseStatusException.class, () ->
+                itemRequestService.getAllItemRequest(1l,-1,1));
     }
 }

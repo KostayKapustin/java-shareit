@@ -30,10 +30,9 @@ public class ItemRequestController {
     }
 
     @GetMapping
-    public List<ItemRequestDto> getAllItemRequestByRequest(@RequestHeader("X-Sharer-User-Id") Long requestorId) {
-        log.info("Запрошен список ItemRequest для пользователя с ID: {}",requestorId);
-
-        return  itemRequestService.getAllItemRequest(requestorId);
+    public List<ItemRequestDto> getAllItemRequestByRequest(@RequestHeader("X-Sharer-User-Id") Long requestId) {
+        log.info("Запрошен список ItemRequest для пользователя с ID: {}",requestId);
+        return  itemRequestService.getAllItemRequest(requestId);
     }
 
     @GetMapping(value = "/all")

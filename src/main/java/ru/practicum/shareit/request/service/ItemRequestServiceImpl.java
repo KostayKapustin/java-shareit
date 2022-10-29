@@ -49,7 +49,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             itemRequest = itemRequestStorage
                     .findById(requestId).get();
         } catch (Exception exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Не найдено!");
         }
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
         itemRequestDto.setItems(itemService.getAllItemsByRequest(itemRequest));

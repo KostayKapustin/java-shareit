@@ -125,6 +125,8 @@ public class BookingServiceTest {
                 equalTo(0));
         assertThrows(BadRequestException.class, () ->
                 bookingService.getAllBookingsForBooker(user2, "TEST", 0, 10));
+        assertThrows(Exception.class, () -> bookingService.getAllBookingsForOwner
+                (anotherUser, "ALL11", 0, 10));
     }
 
     @Test
@@ -137,6 +139,10 @@ public class BookingServiceTest {
                         .getStatus(),
                 equalTo(WAITING));
         bookingService.approvalBookingById(1L, 1L, true);
+        assertThrows(ResponseStatusException.class, () -> bookingService.approvalBookingById
+                (1L, 100L, true));
+        assertThrows(ResponseStatusException.class, () -> bookingService.approvalBookingById
+                (1L, 1L, false));
         assertThat(bookingService.getAllBookingsForBooker(user2, "ALL", 0, 10)
                         .get(0)
                         .getStatus(),
@@ -208,6 +214,8 @@ public class BookingServiceTest {
         assertThat(bookingService.getAllBookingsForOwner(user, "PAST", 0, 10)
                         .size(),
                 equalTo(0));
+        assertThrows(Exception.class, () -> bookingService.getAllBookingsForOwner
+                (user, "PAST11", 0, 10));
     }
 
     @Test
@@ -217,5 +225,48 @@ public class BookingServiceTest {
         bookingService.addNewBooking(booking1);
         assertThat(bookingService.checkBookingByBooker(item1, user2),
                 equalTo(false));
+    }
+
+    @Test
+    @DirtiesContext
+    void checkingConstructor() {
+        Booking booking10 = new Booking(1L,
+                LocalDateTime.of(2025, 1, 11, 11, 0),
+                LocalDateTime.of(2025, 2, 11, 11, 0),
+                item1,
+                user2,
+                WAITING);
+        assertThat(bookingService.addNewBooking(booking10)
+                        .getId(),
+                equalTo(1L));
+        assertThat(bookingService.addNewBooking(booking10)
+                .getStatus(),
+                equalTo(WAITING));
+    }
+
+    @Test
+    @DirtiesContext
+    void checkAddNewBooking() {
+        Booking booking20 = new Booking(1L,
+                LocalDateTime.of(2026, 1, 11, 11, 0),
+                LocalDateTime.of(2025, 2, 11, 11, 0),
+                item1,
+                user2,
+                WAITING);
+        Booking booking30 = new Booking(1L,
+                LocalDateTime.now(),
+                LocalDateTime.of(2025, 2, 11, 11, 0),
+                item1,
+                user2,
+                WAITING);
+        Booking booking40 = new Booking(1L,
+                LocalDateTime.of(2025, 1, 11, 11, 0),
+                LocalDateTime.of(2025, 2, 11, 11, 0),
+                item1,
+                user,
+                WAITING);
+        assertThrows(ResponseStatusException.class, () -> bookingService.addNewBooking(booking20));
+        assertThrows(ResponseStatusException.class, () -> bookingService.addNewBooking(booking30));
+        assertThrows(ResponseStatusException.class, () -> bookingService.addNewBooking(booking40));
     }
 }

@@ -32,11 +32,11 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDtoItemOrUser addNewBooking(Booking booking) {
         checkAddNewBooking(booking);
+        bookingStorage.save(booking);
         BookingDtoItemOrUser bookingDtoItemOrUser =
                 BookingMapper.toBookingDtoItemOrUser(booking);
         bookingDtoItemOrUser.setItem(ItemMapper.toItemDtoBooking(booking.getItem()));
         bookingDtoItemOrUser.setBooker(UserMapper.toUserDtoBooking(booking.getBooker()));
-        bookingStorage.save(booking);
         return bookingDtoItemOrUser;
     }
 

@@ -177,4 +177,11 @@ public class BookingControllerTest {
                         .header("X-Sharer-User-Id",1L))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void checkingConstructor() throws Exception {
+        BookingDto bookingDto = new BookingDto(
+
+        );
+    }
 }

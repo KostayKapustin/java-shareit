@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> searchItem(String text) {
         List<Item> outgoingList = new ArrayList<>();
         List<Item> incomingList = itemStorage.findAll();
-        for (Item item: incomingList) {
+        for (Item item : incomingList) {
             if (item.getDescription().toLowerCase().contains(text.toLowerCase()) && item.getAvailable()) {
                 outgoingList.add(item);
             }
@@ -90,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
         if (!checkFlag) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        Comment commentTmp =  commentStorage.save(comment);
+        Comment commentTmp = commentStorage.save(comment);
         return CommentMapper.toCommentDto(commentTmp);
     }
 
@@ -98,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
     public List<CommentDto> getCommentsByItem(Item item) {
         List<Comment> comments = commentStorage.findAllByItemOrderByIdDesc(item);
         List<CommentDto> commentDtoList = new ArrayList<>();
-        for (Comment comment: comments) {
+        for (Comment comment : comments) {
             commentDtoList.add(CommentMapper.toCommentDto(comment));
         }
         return commentDtoList;
@@ -108,7 +108,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getAllItemsByRequest(ItemRequest itemRequest) {
         List<Item> items = itemStorage.findAllByRequest(itemRequest);
         List<ItemDto> itemDto = new ArrayList<>();
-        for (Item item: items) {
+        for (Item item : items) {
             itemDto.add(ItemMapper.toItemDto(item));
         }
         return itemDto;
@@ -116,10 +116,9 @@ public class ItemServiceImpl implements ItemService {
 
     private void checkIncomingItem(Item item) {
         try {
-            getUserById(item.getOwner().getId());
-        } catch (NullPointerException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND);
+            userStorage.findById(item.getOwner().getId()).get();
+        } catch (NoSuchElementException exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         if (item.getAvailable() == null) {
             throw new ResponseStatusException(
@@ -136,14 +135,4 @@ public class ItemServiceImpl implements ItemService {
                     HttpStatus.BAD_REQUEST);
         }
     }
-
-    public User getUserById(Long id) {
-        try {
-            return userStorage.findById(id).get();
-        } catch (NoSuchElementException exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-    }
-
-
 }

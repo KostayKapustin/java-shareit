@@ -211,5 +211,25 @@ public class ItemServiceTest {
         itemService.addComment(item1, user2, comment, true);
         assertThrows(InvalidDataAccessApiUsageException.class, () -> itemService.getAllItemsByRequest(itemRequest));
     }
+
+    @Test
+    @DirtiesContext
+    void checkingConstructor() {
+        Item item10 = new Item(1L, "name", "description", true, user);
+        assertThat(itemService.addItem(item10)
+                        .getId(),
+                equalTo(1L));
+        assertThat(itemService.addItem(item10)
+                        .getDescription(),
+                equalTo("description"));
+    }
+
+    @Test
+    @DirtiesContext
+    void getCommentsByItem() {
+        assertThat(itemService.getCommentsByItem(itemService.addItem(item1))
+                        .size(),
+                equalTo(0));
+    }
 }
 
