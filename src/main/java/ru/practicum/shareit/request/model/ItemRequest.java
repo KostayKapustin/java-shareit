@@ -14,7 +14,7 @@ public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "request_id")
-    Long id;
+    long id;
 
     @Column(name = "request_description")
     String description;

@@ -90,8 +90,7 @@ public class ItemServiceImpl implements ItemService {
         if (!checkFlag) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        Comment commentTmp = commentStorage.save(comment);
-        return CommentMapper.toCommentDto(commentTmp);
+        return CommentMapper.toCommentDto(commentStorage.save(comment));
     }
 
     @Override
