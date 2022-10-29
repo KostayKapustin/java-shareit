@@ -24,7 +24,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults
 public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestStorage itemRequestStorage;
     private final ItemService itemService;
