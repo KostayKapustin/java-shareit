@@ -8,6 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -32,6 +35,7 @@ public class ItemRequestServiceTest {
     private UserService userService;
 
     private User user = new User();
+    private final Item item1 = new Item();
     private ItemRequest itemRequest = new ItemRequest();
 
 
@@ -41,6 +45,11 @@ public class ItemRequestServiceTest {
         user.setName("user");
         user.setEmail("user@user.com");
         userService.addUser(user);
+
+        item1.setOwner(user);
+        item1.setName("item1 item1");
+        item1.setDescription("item1 description");
+        item1.setAvailable(true);
 
         itemRequest.setId(1L);
         itemRequest.setDescription("Test");
@@ -62,6 +71,7 @@ public class ItemRequestServiceTest {
 
         assertThrows(NoSuchElementException.class, () -> itemRequestService.getItemRequestById(100L));
 
+        Item item = ItemMapper.toItemRequest(ItemMapper.toItemDto(item1), user, itemRequest);
     }
 
     @Test
