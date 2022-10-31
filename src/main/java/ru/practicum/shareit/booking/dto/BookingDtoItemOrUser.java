@@ -22,10 +22,4 @@ public class BookingDtoItemOrUser {
     private UserDtoBooking booker;
     private BookingStatus status;
 
-    public BookingDtoItemOrUser(Long id, LocalDateTime start, LocalDateTime end, BookingStatus status) {
-        this.id = id;
-        this.start = start;
-        this.end = end;
-        this.status = status;
-    }
 }

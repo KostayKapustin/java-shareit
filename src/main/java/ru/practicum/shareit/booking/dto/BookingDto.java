@@ -15,13 +15,4 @@ public class BookingDto {
     private Long itemId;
     private Long bookerId;
     private BookingStatus status;
-
-    public BookingDto(Long id, LocalDateTime start, LocalDateTime end, Long itemId, Long bookerId, BookingStatus status) {
-        this.id = id;
-        this.start = start;
-        this.end = end;
-        this.itemId = itemId;
-        this.bookerId = bookerId;
-        this.status = status;
-    }
 }
