@@ -1,9 +1,7 @@
 package ru.practicum.shareit.item;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
@@ -14,12 +12,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Validated
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentDto {
-    private Long id;
+    Long id;
 
     @NotEmpty(message = "Text не может быть равен null!")
-    private String text;
-    private Long authorId;
-    private String authorName;
-    private LocalDateTime created;
+    String text;
+    Long authorId;
+    String authorName;
+    LocalDateTime created;
 }

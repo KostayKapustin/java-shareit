@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
@@ -8,11 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingClient extends BaseClient {
-    private static final String API_PREFIX = "/bookings";
+    static final String API_PREFIX = "/bookings";
+    Map<String, Object> parameters = new HashMap<>();
 
     public BookingClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
@@ -39,8 +44,7 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getAllBookingsForBooker(Long userId, String state, Integer from, Integer size) {
-
-        Map<String, Object> parameters = Map.of(
+        parameters = Map.of(
                 "state", state,
                 "from", from,
                 "size", size
@@ -50,7 +54,7 @@ public class BookingClient extends BaseClient {
 
     public ResponseEntity<Object> getAllBookingsForOwner(Long userId, String state, Integer from, Integer size) {
 
-        Map<String, Object> parameters = Map.of(
+        parameters = Map.of(
                 "state", state,
                 "from", from,
                 "size", size

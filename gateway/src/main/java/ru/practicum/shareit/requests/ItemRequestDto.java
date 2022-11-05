@@ -1,9 +1,7 @@
 package ru.practicum.shareit.requests;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.ItemDto;
 
@@ -16,12 +14,13 @@ import java.util.List;
 @Getter
 @Setter
 @Validated
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemRequestDto {
-    private Long id;
+    Long id;
 
     @NotEmpty(message = "Description не может быть равен null!")
-    private String description;
-    private Long requestId;
-    private LocalDateTime created;
-    private List<ItemDto> items;
+    String description;
+    Long requestId;
+    LocalDateTime created;
+    List<ItemDto> items;
 }

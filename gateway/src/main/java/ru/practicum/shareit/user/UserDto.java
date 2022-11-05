@@ -1,9 +1,7 @@
 package ru.practicum.shareit.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
@@ -14,9 +12,10 @@ import javax.validation.constraints.Email;
 @Setter
 @ToString
 @Validated
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDto {
-    private Long id;
-    private String name;
+    Long id;
+    String name;
     @Email(message = "Не правильно указан mail!")
-    private String email;
+    String email;
 }
